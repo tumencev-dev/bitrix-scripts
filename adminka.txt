@@ -1,0 +1,26 @@
+Добро пожаловать в Timeweb!
+Ваш аккаунт готов к работе
+
+Сайт хостинга: timeweb.ru
+
+Логин: cd56356
+Пароль: 3Zb4hU1Rw4Tw
+
+Доступ по FTP
+ftp://bone018.timeweb.ru
+Логин и пароль для панели управления и FTP совпадают
+
+NS-серверы для переноса домена в Timeweb
+ns1.timeweb.ru
+ns2.timeweb.ru
+ns3.timeweb.org
+ns4.timeweb.org
+
+
+БИТРИКС - https://cd56356.tmweb.ru/
+
+Login - admin
+Pass  - zxc123$$
+
+Страница для проверки данных из первого задания:
+https://cd56356.tmweb.ru/bitrix/admin/currencies.php?lang=ru
