@@ -92,7 +92,20 @@ def result():
             )
             return 'add Deal'
         else:
-            return 'Deal'
+            bx24.callMethod(
+                'crm.deal.update',
+                id = get_deal(data['delivery_code'])[0]['ID'],
+                fields = {
+                    'TITLE': data['title'],
+                    'STAGE_ID': 'NEW',
+                    'COMMENTS': data["description"],
+                    'CONTACT_ID': contact_id,
+                    'UF_CRM_1628887616': data["delivery_adress"],
+                    'UF_CRM_1628887689': data["delivery_date"],
+                    'UF_CRM_1628887707': data["delivery_code"].replace('#','')
+                }
+            )
+            return 'update Deal'
     except BitrixError as message:
         return message
 
