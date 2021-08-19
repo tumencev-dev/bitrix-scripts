@@ -1,5 +1,6 @@
 from flask import Flask, request # использую для запуска локального сервера
 from bitrix24 import * # библиотека для работы с вебхуками Битрикс
+import requests
 
 bx24 = Bitrix24('https://cd56356.tmweb.ru/rest/1/mdg5cbd63vj7xscr/')
 
@@ -49,7 +50,7 @@ def get_product_list_id(product_list): # Функция для поиска пр
     list_id = []
     for product in product_list:
         call = bx24.callMethod('crm.product.list', filter = {'NAME': product})
-        list_id.append({'PRODUCT_ID': int(call[0]['ID'])})
+        list_id.append(int(call[0]['ID']))
     return list_id
 
 def get_deal(code): # Функция поиска сделки по коду доставки
@@ -74,23 +75,23 @@ def add_deal(title, description, contact, delivery_adress, delivery_date, delive
             'UF_CRM_1628887707': delivery_code.replace('#','')
         })
 
+def add_product(id, product_list): # Функция добавления продуктов в сделку
+    url = f"https://cd56356.tmweb.ru/rest/1/mdg5cbd63vj7xscr/crm.deal.productrows.set.json?id={id}&"
+    for i in range(0, len(product_list)):
+        url = url + f"rows[{i}][PRODUCT_ID]={product_list[i]}&"
+    requests.get(url)
+
 @app.route('/', methods=['POST'])
 def result():
     data = request.json
     try:
         contact_id = get_contact(data['client']['name'], data['client']['surname'], data['client']['phone'], data['client']['adress'])
+        list_products = get_product_list_id(data['products'])
+        deal = get_deal(data['delivery_code'])[0]['ID']
         if get_deal(data['delivery_code']) == []:
             add_deal(data["title"], data["description"], contact_id, data["delivery_adress"], data["delivery_date"], data["delivery_code"])
-            deal = get_deal(data['delivery_code'])[0]['ID']
-            list_products = get_product_list_id(data['products'])
-            print(deal)
-            print(list_products)
-            bx24.callMethod(
-                'crm.deal.productrows.set',
-                id = deal,
-                rows = list_products
-            )
-            return 'add Deal'
+            add_product(deal, list_products)
+            return 'add Deal\n'
         else:
             bx24.callMethod(
                 'crm.deal.update',
@@ -105,7 +106,8 @@ def result():
                     'UF_CRM_1628887707': data["delivery_code"].replace('#','')
                 }
             )
-            return 'update Deal'
+            add_product(deal, list_products)
+            return 'update Deal\n'
     except BitrixError as message:
         return message
 
